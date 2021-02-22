@@ -22,7 +22,6 @@ def bilibili(bilibili_config: Bilibili):
         bangumis = requests.get(
             f'https://api.bilibili.com/x/space/bangumi/follow/list?type=1&pn={i + 1}&ps={limit}&vmid={bilibili_config.uid}').json()
         for bangumi in bangumis['data']['list']:
-            print(bangumi["new_ep"].get("long_title", ""))
             title = f'{bangumi["title"]} 第 {bangumi["new_ep"]["title"]} 话 {bangumi["new_ep"].get("long_title", "")}'
             datetime_start = datetime.strptime(bangumi["new_ep"]["pub_time"], '%Y-%m-%d %H:%M:%S')
             datetime_end = datetime_start + relativedelta(minutes=30)
@@ -30,12 +29,11 @@ def bilibili(bilibili_config: Bilibili):
             event = icalendar.Event()
             event.add('X-WR-TIMEZONE', 'Asia/Shanghai')
             event.add('uid', str(uuid.uuid5(uuid.NAMESPACE_OID, title)) + '@Dreace')
-            print(title)
             event.add('summary', title)
             event.add('dtstamp', datetime.now())
             event.add('dtstart', datetime_start.replace(tzinfo=cst_tz).astimezone(cst_tz))
             event.add('dtend', datetime_end.replace(tzinfo=cst_tz).astimezone(cst_tz))
             calendar.add_component(event)
-    with open('./ics/test.ics', 'wb') as ics_file:
+    with open('./ics/bilibili.ics', 'wb') as ics_file:
         # 去掉换行
         ics_file.write(calendar.to_ical().replace('\r\n '.encode(), b''))
