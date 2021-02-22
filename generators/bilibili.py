@@ -39,4 +39,3 @@ def bilibili(bilibili_config: Bilibili):
     with open('./ics/test.ics', 'wb') as ics_file:
         # 去掉换行
         ics_file.write(calendar.to_ical().replace('\r\n '.encode(), b''))
-    print(calendar.to_ical().decode())
