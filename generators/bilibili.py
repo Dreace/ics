@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 import math
 import icalendar
 import requests
@@ -27,15 +27,22 @@ def bilibili(bilibili_config: Bilibili):
             if timeline.get(bangumi['season_id'], -1) == -1:
                 continue
             title = f'{bangumi["title"]} {timeline[bangumi["season_id"]]["index"]}'
-            datetime_start = datetime.fromtimestamp(timeline[bangumi['season_id']]['time'])
+            datetime_start = datetime.fromtimestamp(timeline[bangumi['season_id']]['time'], cst_tz)
             datetime_end = datetime_start + relativedelta(minutes=30)
 
             event = icalendar.Event()
             event.add('X-WR-TIMEZONE', 'Asia/Shanghai')
             event.add('uid', str(uuid.uuid5(uuid.NAMESPACE_OID, title)) + '@Dreace')
             event.add('summary', title)
-            event.add('dtstart', datetime_start.replace(tzinfo=cst_tz).astimezone(cst_tz))
-            event.add('dtend', datetime_end.replace(tzinfo=cst_tz).astimezone(cst_tz))
+            event.add('dtstart', datetime_start)
+            event.add('dtend', datetime_end)
+            event.add('TRIGGER', timedelta(minutes=-10))
+
+            # 开播十分钟前提醒
+            alarm = icalendar.Alarm()
+            alarm.add("TRIGGER", timedelta(minutes=-10))
+            alarm.add("ACTION", "DISPLAY")
+            event.add_component(alarm)
             calendar.add_component(event)
     with open('./ics/bilibili.ics', 'wb') as ics_file:
         # 去掉换行
