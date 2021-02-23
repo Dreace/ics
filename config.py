@@ -3,8 +3,10 @@ import yaml
 
 class Bilibili:
     def __init__(self, bilibili_config: dict):
-        self.uid = bilibili_config["uid"]
-        self.limit = bilibili_config["limit"]
+        self.enable = bilibili_config["enable"]
+        if self.enable:
+            self.uid = bilibili_config["uid"]
+            self.limit = bilibili_config["limit"]
 
 
 class Config:
