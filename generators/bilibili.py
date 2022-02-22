@@ -72,6 +72,8 @@ def get_timeline() -> dict:
     timeline = {}
     for item_i in timeline_json['result']:
         for item_j in item_i['seasons']:
+            if not item_j.get("pub_index", ""):
+                continue
             timeline[item_j['season_id']] = {
                 'time': item_j['pub_ts'],
                 'index': item_j['pub_index']
