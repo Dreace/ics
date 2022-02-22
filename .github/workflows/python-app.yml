@@ -29,6 +29,11 @@ jobs:
         python main.py
     - name: Commit iCal File
       run: |
+        git diff --exit-code
+        if [[ $? == 0  ]]; then 
+          echo "noting to commit"
+          exit 0
+        fi
         git config --global user.name 'Dreace'
         git config --global user.email 'dreace@users.noreply.github.com'
         git add .
