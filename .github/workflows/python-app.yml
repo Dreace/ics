@@ -29,7 +29,7 @@ jobs:
         python main.py
     - name: Commit iCal File
       run: |
-        git diff --exit-code
+        git_diff=$(git diff --exit-code)
         if [[ $? == 0  ]]; then 
           echo "noting to commit"
           exit 0
